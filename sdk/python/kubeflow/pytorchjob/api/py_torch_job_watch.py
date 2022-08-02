@@ -43,9 +43,7 @@ def watch(name=None, namespace=None, timeout_seconds=600):
   for event in stream:
     pytorchjob = event['object']
     pytorchjob_name = pytorchjob['metadata']['name']
-    if name and name != pytorchjob_name:
-      continue
-    else:
+    if not name or name == pytorchjob_name:
       status = ''
       update_time = ''
       last_condition = pytorchjob.get('status', {}).get('conditions', [])[-1]
@@ -54,6 +52,5 @@ def watch(name=None, namespace=None, timeout_seconds=600):
 
       tbl(pytorchjob_name, status, update_time)
 
-      if name == pytorchjob_name:
-        if status == 'Succeeded' or status == 'Failed':
-          break
+    if name == pytorchjob_name and status in ['Succeeded', 'Failed']:
+      break

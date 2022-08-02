@@ -26,9 +26,7 @@ def get_current_k8s_namespace():
 
 
 def get_default_target_namespace():
-  if not is_running_in_k8s():
-    return 'default'
-  return get_current_k8s_namespace()
+  return get_current_k8s_namespace() if is_running_in_k8s() else 'default'
 
 
 def set_pytorchjob_namespace(pytorchjob):
@@ -68,8 +66,5 @@ def to_selector(labels):
   """
   Transfer Labels to selector.
   """
-  parts = []
-  for key in labels.keys():
-    parts.append("{0}={1}".format(key, labels[key]))
-
+  parts = ["{0}={1}".format(key, labels[key]) for key in labels.keys()]
   return ",".join(parts)
